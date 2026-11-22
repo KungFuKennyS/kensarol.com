@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ken Sarol | Video Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Hanken+Grotesk:wght@400;500;700&family=Fragment+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4efe9;--panel:#ffffff;--ink:#1a1420;--muted:#6a6070;--line:#ddd3ca;
+  --hot:#e0364f;--glow:#ff8a3d;--cool:#5b3df5;--onhot:#fff;
+  --hero1:#2a1747;--hero2:#7a1f4a;--hero3:#e8643a;--herotext:#fff7ef;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f0b14;--panel:#1a1422;--ink:#f6efe8;--muted:#a99fb3;--line:#2d2437;
+  --hot:#ff4d6a;--glow:#ffa05a;--cool:#8f7bff;--onhot:#1a0610;
+}}
+:root[data-theme="dark"]{
+  --bg:#0f0b14;--panel:#1a1422;--ink:#f6efe8;--muted:#a99fb3;--line:#2d2437;
+  --hot:#ff4d6a;--glow:#ffa05a;--cool:#8f7bff;--onhot:#1a0610;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);color-scheme:light dark;scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.65 "Hanken Grotesk",system-ui,sans-serif;overflow-x:hidden}
+h1,h2,h3{font-family:Syne,"Hanken Grotesk",sans-serif;margin:0;line-height:1}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--glow);outline-offset:3px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+.mono{font-family:"Fragment Mono",ui-monospace,monospace}
+
+/* HERO */
+.hero{position:relative;color:var(--herotext);overflow:hidden;
+  background:radial-gradient(900px 500px at 85% -10%,var(--hero3),transparent 60%),radial-gradient(700px 500px at 0% 100%,var(--hero2),transparent 65%),var(--hero1)}
+.hero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.18;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.hero .wrap{position:relative;z-index:1;padding-top:34px;padding-bottom:0}
+.nav{display:flex;justify-content:space-between;align-items:center;font-size:.95rem}
+.nav a{text-decoration:none;margin-left:22px;opacity:.85}.nav a:hover{opacity:1}
+.rec{display:flex;align-items:center;gap:10px;font-size:.9rem}
+.rec i{width:10px;height:10px;border-radius:50%;background:#ff3b52;animation:blink 1.4s steps(2) infinite}
+@keyframes blink{50%{opacity:.15}}
+.hero h1{font-weight:800;font-size:clamp(3.6rem,15vw,11rem);letter-spacing:-.045em;margin:9vh 0 0}
+.hero h1 span{display:block}
+.hero .lead{max-width:30rem;font-size:1.2rem;margin:22px 0 0;opacity:.92}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{display:inline-block;text-decoration:none;font-weight:700;padding:13px 24px;border-radius:99px;transition:transform .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn.p{background:#fff7ef;color:#2a1747}
+.btn.g{border:1.5px solid rgba(255,247,239,.6);color:var(--herotext)}
+
+/* editing timeline */
+.suite{position:relative;margin-top:52px;background:rgba(10,6,16,.55);backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.14);border-bottom:0;border-radius:16px 16px 0 0;padding:14px 18px 18px}
+.suite-top{display:flex;justify-content:space-between;font-size:.8rem;opacity:.85;margin-bottom:10px}
+.lanes{position:relative}
+.lane{display:flex;gap:3px;height:34px;margin-bottom:5px;align-items:center}
+.lane b{flex:none;width:58px;font:400 .72rem "Fragment Mono",monospace;opacity:.6}
+.seg{height:100%;border-radius:5px;display:flex;align-items:center;padding:0 10px;font:500 .78rem "Hanken Grotesk",sans-serif;color:#1a1020;overflow:hidden;white-space:nowrap}
+.v1{background:#ffb199}.v2{background:#ffd37a}.v3{background:#b9a6ff}.v4{background:#8fe0c0}
+.wave{display:flex;align-items:center;gap:2px;height:100%;flex:1}
+.wave i{flex:1;min-width:1px;background:#ff8a9a;border-radius:2px}
+.cap-seg{background:rgba(255,247,239,.9)}
+.head{position:absolute;top:-6px;bottom:0;left:58px;width:2px;background:#fff;box-shadow:0 0 12px 2px rgba(255,255,255,.6);pointer-events:none}
+.head::before{content:"";position:absolute;top:0;left:-6px;border:7px solid transparent;border-top:10px solid #fff;border-bottom:0}
+
+/* WORK */
+section{padding:92px 0 0}
+.sh{display:flex;align-items:baseline;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:34px}
+.sh h2{font-size:clamp(2.2rem,6vw,4rem);font-weight:800;letter-spacing:-.03em}
+.sh p{margin:0;color:var(--muted);max-width:24rem}
+.poster{position:relative;display:block;border-radius:20px;overflow:hidden;text-decoration:none;color:#fff7ef;isolation:isolate;
+  box-shadow:0 24px 50px -24px rgba(40,10,60,.55);transition:transform .3s,box-shadow .3s}
+.poster:hover{transform:translateY(-6px);box-shadow:0 34px 60px -24px rgba(40,10,60,.7)}
+.poster::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--g)}
+.poster::after{content:"";position:absolute;inset:0;z-index:-1;opacity:.2;mix-blend-mode:overlay;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.5) 0 1px,transparent 1px 4px)}
+.poster .pl{position:absolute;left:50%;top:50%;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;background:#fff7ef;display:grid;place-items:center;
+  transition:transform .25s}
+.poster:hover .pl{transform:scale(1.14)}
+.pl svg{width:30px;height:30px;margin-left:5px;fill:#2a1747}
+.poster .meta{position:absolute;left:22px;right:22px;bottom:18px;display:flex;justify-content:space-between;font-size:.8rem}
+.poster .lab{position:absolute;left:22px;top:18px;font:500 .82rem "Fragment Mono",monospace;background:rgba(0,0,0,.35);padding:4px 12px;border-radius:99px}
+.hero-card{aspect-ratio:21/9}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px}
+.duo .poster{aspect-ratio:16/10}
+.t{margin:14px 4px 0}
+.t h3{font-size:1.5rem;font-weight:800}.t p{margin:6px 0 0;color:var(--muted)}
+.g1{--g:linear-gradient(135deg,#2a1747,#7a1f4a 55%,#e8643a)}
+.g2{--g:linear-gradient(135deg,#0e2a47,#2b5bd0 60%,#7bd0ff)}
+.g3{--g:linear-gradient(135deg,#3b1257,#b0307d 60%,#ff9a5a)}
+.g4{--g:linear-gradient(160deg,#10351f,#2d9b6a 70%,#d7f76b)}
+.g5{--g:linear-gradient(160deg,#4a1010,#d63b3b 65%,#ffb45a)}
+.g6{--g:linear-gradient(160deg,#1c1450,#5b3df5 65%,#ff7ac6)}
+.shorts{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:20px}
+.shorts .poster{aspect-ratio:9/16;border-radius:26px}
+.shorts .pl{width:60px;height:60px;margin:-30px 0 0 -30px}.shorts .pl svg{width:22px;height:22px}
+.shorts .meta{bottom:16px}
+
+/* ABOUT */
+.about{display:grid;grid-template-columns:1.1fr 1fr;gap:56px}
+.skill{display:grid;grid-template-columns:54px 1fr;gap:16px;padding:20px 0;border-top:1px solid var(--line)}
+.skill:last-child{border-bottom:1px solid var(--line)}
+.ico{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;font:800 1.3rem Syne,sans-serif;color:var(--onhot);background:linear-gradient(135deg,var(--hot),var(--glow))}
+.skill:nth-child(2) .ico{background:linear-gradient(135deg,var(--cool),var(--hot))}
+.skill:nth-child(3) .ico{background:linear-gradient(135deg,var(--glow),#ffd37a);color:#2a1747}
+.skill:nth-child(4) .ico{background:linear-gradient(135deg,#27a97a,#8fe0c0);color:#06281b}
+.skill h3{font-size:1.25rem;font-weight:800;margin-bottom:4px}.skill p{margin:0;color:var(--muted)}
+.bio{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:34px;align-self:start}
+.bio h3{font-size:1.7rem;font-weight:800;margin-bottom:14px}
+.bio p{margin:0 0 14px}.bio p:last-child{margin:0;color:var(--muted)}
+.stat{display:flex;gap:28px;margin:6px 0 22px}
+.stat b{display:block;font:800 2.6rem Syne,sans-serif;line-height:1;background:linear-gradient(135deg,var(--hot),var(--glow));-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat span{font-size:.85rem;color:var(--muted)}
+
+/* CONTACT */
+.contact{margin-top:96px;padding:90px 0;color:var(--herotext);text-align:center;position:relative;overflow:hidden;
+  background:radial-gradient(700px 400px at 50% 120%,var(--hero3),transparent 70%),var(--hero1)}
+.contact h2{font-size:clamp(2.4rem,8vw,6rem);font-weight:800;letter-spacing:-.04em;margin-bottom:14px}
+.contact p{opacity:.85;margin:0 0 30px}
+.contact .btn{background:#fff7ef;color:#2a1747;font-size:1.1rem;padding:16px 32px;word-break:break-all}
+footer{padding:26px 0 40px;text-align:center;color:var(--muted);font-size:.88rem}
+
+@media (max-width:820px){
+  .duo,.about{grid-template-columns:1fr}.hero-card{aspect-ratio:16/10}
+  .shorts{grid-template-columns:repeat(2,1fr)}
+  .about{gap:36px}
+  .lane b{width:44px}.head{left:44px}
+  .nav a{margin-left:14px}
+}
+@media (prefers-reduced-motion:reduce){.rec i{animation:none}.poster,.btn,.pl{transition:none}}
+</style>
+</head>
+<body>
+<header class="hero" id="top">
+  <div class="wrap">
+    <nav class="nav">
+      <div class="rec"><i></i><span class="mono">REC · Cebu City</span></div>
+      <div><a href="#work">Work</a><a href="#about">About</a><a href="#contact">Contact</a></div>
+    </nav>
+    <h1><span>Ken</span><span>Sarol</span></h1>
+    <p class="lead">I’m a video editor. I turn raw footage into clean, fast, watchable stories, from short-form clips to long-form edits.</p>
+    <div class="cta"><a class="btn p" href="#work">Watch my work</a><a class="btn g" href="#contact">Hire me</a></div>
+
+    <div class="suite" aria-hidden="true">
+      <div class="suite-top mono"><span>Sequence 01</span><span id="tc">00:00:00:00</span></div>
+      <div class="lanes">
+        <div class="lane"><b>V1</b><div class="seg v1" style="flex:3">Cut</div><div class="seg v2" style="flex:1.4">Fade</div><div class="seg v3" style="flex:2.6">Cut</div><div class="seg v2" style="flex:1.2">Wipe</div><div class="seg v4" style="flex:3">Cut</div></div>
+        <div class="lane"><b>A1</b><div class="wave" id="wave"></div></div>
+        <div class="lane"><b>CC</b><div class="seg cap-seg" style="flex:2">Captions</div><div style="flex:.4"></div><div class="seg cap-seg" style="flex:3">Captions</div><div style="flex:.5"></div><div class="seg cap-seg" style="flex:2.5">Captions</div></div>
+        <div class="head" id="head"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+<section id="work">
+  <div class="wrap">
+    <div class="sh"><h2>Selected work</h2><p>Tap any frame to watch it on YouTube.</p></div>
+
+    <a class="poster hero-card g1" href="https://youtu.be/t6AtvG6bfUU?si=qARjM1_2qrIpSsgf" target="_blank" rel="noopener" aria-label="Watch the long-form edit">
+      <span class="lab">LONG-FORM</span><span class="pl"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span>
+      <span class="meta mono"><span>Full-length edit</span><span>YouTube</span></span>
+    </a>
+    <div class="t"><h3>The long-form edit</h3><p>Pacing, structure and sound held together over a full runtime.</p></div>
+
+    <div class="duo">
+      <div>
+        <a class="poster g2" href="https://youtu.be/QMJbglBzPqU?si=3-mmcc289_GxNyEu" target="_blank" rel="noopener" aria-label="Watch the one-minute documentary">
+          <span class="lab">DOCUMENTARY</span><span class="pl"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span>
+          <span class="meta mono"><span>1:00</span><span>YouTube</span></span>
+        </a>
+        <div class="t"><h3>One-minute documentary</h3><p>A full story in sixty seconds.</p></div>
+      </div>
+      <div>
+        <div class="bio" style="padding:30px">
+          <h3>Short-form, four ways</h3>
+          <p style="color:var(--muted)">Quick, punchy vertical cuts built for scrolling. Captions, timing and audio do the work.</p>
+          <p style="margin:0"><a href="#shorts" style="font-weight:700">Jump to the shorts ↓</a></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="sh" id="shorts" style="margin:70px 0 0"><h2 style="font-size:clamp(1.7rem,4vw,2.4rem)">Short-form edits</h2></div>
+    <div class="shorts">
+      <a class="poster g3" href="https://youtu.be/pibRkPhal4s?si=Vt-5RyALQedFBV5X" target="_blank" rel="noopener" aria-label="Watch short edit 1"><span class="lab">SHORT 1</span><span class="pl"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span><span class="meta mono"><span>9:16</span><span>YouTube</span></span></a>
+      <a class="poster g4" href="https://youtu.be/oob1Rmz2pfk?si=7OKElF-MSRtXKkxf" target="_blank" rel="noopener" aria-label="Watch short edit 2"><span class="lab">SHORT 2</span><span class="pl"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span><span class="meta mono"><span>9:16</span><span>YouTube</span></span></a>
+      <a class="poster g5" href="https://youtu.be/K_eVvjXYf4w?si=0k5N-7pXIj2ihH-6" target="_blank" rel="noopener" aria-label="Watch short edit 3"><span class="lab">SHORT 3</span><span class="pl"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span><span class="meta mono"><span>9:16</span><span>YouTube</span></span></a>
+      <a class="poster g6" href="https://youtu.be/q6Gs3CQbQzA?si=pzZ25SttE8_5Gndd" target="_blank" rel="noopener" aria-label="Watch short edit 4"><span class="lab">SHORT 4</span><span class="pl"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></span><span class="meta mono"><span>9:16</span><span>YouTube</span></span></a>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap about">
+    <div>
+      <div class="sh" style="margin-bottom:22px"><h2>What I do</h2></div>
+      <div class="skill"><div class="ico">✂</div><div><h3>Cutting and assembly</h3><p>Raw footage shaped into a clear, well-paced sequence.</p></div></div>
+      <div class="skill"><div class="ico">⇄</div><div><h3>Transitions</h3><p>Smooth moves between shots that support the story.</p></div></div>
+      <div class="skill"><div class="ico">♪</div><div><h3>Audio</h3><p>Music, voice and sound balanced so nothing fights.</p></div></div>
+      <div class="skill"><div class="ico">Aa</div><div><h3>Captions</h3><p>Readable on-screen text for short and long videos.</p></div></div>
+    </div>
+    <div class="bio">
+      <h3>The person behind the edit</h3>
+      <div class="stat"><div><b>2</b><span>years freelance editing</span></div><div><b>10+</b><span>years in detail-heavy work</span></div></div>
+      <p>Since 2016 I’ve worked in data entry, technical support, administration, lead generation and web scraping. That built a habit of accurate, organized, fast file handling, which carries straight into managing footage and projects.</p>
+      <p>I work well with little supervision, adapt quickly when priorities change, and get along with all kinds of people.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="contact" id="contact">
+  <div class="wrap">
+    <h2>Got footage?<br>Let’s cut it.</h2>
+    <p>Send me your clips and tell me what you want them to become.</p>
+    <a class="btn" href="mailto:ken.sarol23@gmail.com">ken.sarol23@gmail.com</a>
+  </div>
+</div>
+<footer>© 2026 Ken Sarol · Cebu City, Philippines</footer>
+
+<script>
+(function(){
+  var w=document.getElementById('wave');
+  for(var i=0;i<90;i++){
+    var e=document.createElement('i');
+    var h=20+Math.abs(Math.sin(i*.55)*Math.cos(i*.21))*70+((i*37)%17);
+    e.style.height=Math.min(100,h)+'%';w.appendChild(e);
+  }
+  var head=document.getElementById('head'),tc=document.getElementById('tc'),
+      lanes=head.parentNode,reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  function pad(n){return (n<10?'0':'')+n}
+  function set(p){
+    var lab=lanes.querySelector('.lane b').offsetWidth,room=lanes.clientWidth-lab-3;
+    head.style.left=(lab+room*p)+'px';
+    var f=Math.floor(p*30*24*0.5);
+    tc.textContent='00:00:'+pad(Math.floor(f/24)%60)+':'+pad(f%24);
+  }
+  if(reduce){set(.45);return}
+  var t0=null,dur=9000;
+  function tick(t){
+    if(t0===null)t0=t;
+    set(((t-t0)%dur)/dur);
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
